@@ -13,7 +13,7 @@ int main(int, char**) {
    cl::sycl::queue queue(device_selector);
    std::cout << "Running on "
              << queue.get_device().get_info<cl::sycl::info::device::name>()
-             << "\n";
+             << std::endl;
    {
       cl::sycl::buffer<cl::sycl::float4, 1> a_sycl(&a, cl::sycl::range<1>(1));
       cl::sycl::buffer<cl::sycl::float4, 1> b_sycl(&b, cl::sycl::range<1>(1));
@@ -29,9 +29,9 @@ int main(int, char**) {
          });
       });
    }
-   std::cout << "  A { " << a.x() << ", " << a.y() << ", " << a.z() << ", " << a.w() << " }\n"
-        << "+ B { " << b.x() << ", " << b.y() << ", " << b.z() << ", " << b.w() << " }\n"
-        << "------------------\n"
+   std::cout << "  A { " << a.x() << ", " << a.y() << ", " << a.z() << ", " << a.w() << " }" << std::endl
+        << "+ B { " << b.x() << ", " << b.y() << ", " << b.z() << ", " << b.w() << " }" << std::endl
+        << "------------------" << std::endl
         << "= C { " << c.x() << ", " << c.y() << ", " << c.z() << ", " << c.w() << " }"
         << std::endl;
 		
