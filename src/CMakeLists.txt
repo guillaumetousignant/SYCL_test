@@ -1,4 +1,4 @@
-add_library(SYCL_SEM "")
+add_library(SYCL_SEM noot.cpp)
 
 target_include_directories(SYCL_SEM PUBLIC 
     $<INSTALL_INTERFACE:include/SYCL_SEM/>    
@@ -44,7 +44,14 @@ install(EXPORT sycl_fem-export
     lib/cmake/SYCL_SEM
 )
 
-add_executable(sycl_test main.cpp)
+add_executable(sycl_test ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake/)
+include(FindComputeCpp)
+include_directories(${COMPUTECPP_INCLUDE_DIRECTORY})
+
+add_sycl_to_target(TARGET sycl_test SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+                    ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(sycl_test PRIVATE SYCL_SEM)
 target_compile_features(sycl_test PRIVATE cxx_std_20)
