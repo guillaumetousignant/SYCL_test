@@ -46,12 +46,17 @@ install(EXPORT sycl_fem-export
 
 add_executable(sycl_test ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake/)
-include(FindComputeCpp)
-include_directories(${COMPUTECPP_INCLUDE_DIRECTORY})
+if(WIN32)
+    set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake/)
+    include(FindComputeCpp)
+    include_directories(${COMPUTECPP_INCLUDE_DIRECTORY})
+else()   
+    set(HIPSYCL_TARGETS "cuda:sm_60") # sm_60 is Pascal
+    find_package(hipSYCL)
+endif()
 
 add_sycl_to_target(TARGET sycl_test SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-                    ${CMAKE_CURRENT_BINARY_DIR})
+                        ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(sycl_test PRIVATE SYCL_SEM)
 target_compile_features(sycl_test PRIVATE cxx_std_20)
