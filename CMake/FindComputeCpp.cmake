@@ -404,11 +404,6 @@ function(add_sycl_to_target)
     ${ARGN}
   )
 
-  message(${SDK_ADD_SYCL_TARGET})
-  message(${SDK_ADD_SYCL_TARGET})
-  message(${SDK_ADD_SYCL_TARGET})
-  message(${SDK_ADD_SYCL_TARGET})
-
   set_target_properties(${SDK_ADD_SYCL_TARGET} PROPERTIES LINKER_LANGUAGE CXX)
 
   # If the CXX compiler is set to compute++ enable the driver.

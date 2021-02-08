@@ -14,7 +14,7 @@ if(NOT WIN32)
     target_link_libraries(SYCL_SEM PUBLIC debug pthread)
 endif()
 
-target_compile_features(SYCL_SEM PRIVATE cxx_std_20)
+target_compile_features(SYCL_SEM PRIVATE cxx_std_17)
 if(NOT ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
     set_property(TARGET SYCL_SEM PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
 endif()
@@ -46,20 +46,34 @@ install(EXPORT sycl_fem-export
 
 add_executable(sycl_test ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
-if(WIN32)
+option(USE_COMPUTECPP "Use the ComputeCpp SYCL backend." OFF)
+if (USE_COMPUTECPP)
     set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake/)
     include(FindComputeCpp)
     include_directories(${COMPUTECPP_INCLUDE_DIRECTORY})
-else()   
+
+    add_sycl_to_target(TARGET sycl_test SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+                        ${CMAKE_CURRENT_BINARY_DIR})
+endif()
+
+option(USE_HIPSYCL "Use the HipSYCL SYCL backend." OFF)
+if (USE_HIPSYCL)
     set(HIPSYCL_TARGETS "cuda:sm_60") # sm_60 is Pascal
     find_package(hipSYCL)
 endif()
 
-add_sycl_to_target(TARGET sycl_test SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-                        ${CMAKE_CURRENT_BINARY_DIR})
+option(USE_ONEAPI "Use the OneAPI SYCL backend." OFF)
+if (USE_ONEAPI)
+    set(CMAKE_CXX_COMPILER dpcpp)
+    target_link_libraries(SYCL_SEM PUBLIC OpenCL sycl)
+    get_filename_component(Compiler_Directory CMAKE_CXX_COMPILER DIRECTORY)
+    target_include_directories(SYCL_SEM PUBLIC ${ONEAPI_DIR}/include/sycl)
+    target_link_directories(SYCL_SEM PUBLIC ${ONEAPI_DIR}/lib)
+    target_compile_definitions(SYCL_SEM PUBLIC CL_TARGET_OPENCL_VERSION=220)
+endif()
 
 target_link_libraries(sycl_test PRIVATE SYCL_SEM)
-target_compile_features(sycl_test PRIVATE cxx_std_20)
+target_compile_features(sycl_test PRIVATE cxx_std_17)
 if(NOT ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
     set_property(TARGET sycl_test PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
 endif()
