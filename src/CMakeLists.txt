@@ -50,7 +50,7 @@ option(USE_COMPUTECPP "Use the ComputeCpp SYCL backend." OFF)
 if (USE_COMPUTECPP)
     set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake/)
     include(FindComputeCpp)
-    include_directories(${COMPUTECPP_INCLUDE_DIRECTORY})
+    include_directories(${COMPUTECPP_DIR}/include/sycl)
 
     add_sycl_to_target(TARGET sycl_test SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
                         ${CMAKE_CURRENT_BINARY_DIR})
