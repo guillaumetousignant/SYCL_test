@@ -58,8 +58,12 @@ endif()
 
 option(USE_HIPSYCL "Use the HipSYCL SYCL backend." OFF)
 if (USE_HIPSYCL)
-    set(HIPSYCL_TARGETS "cuda:sm_60") # sm_60 is Pascal
-    find_package(hipSYCL)
+    #set(HIPSYCL_TARGETS "cuda:sm_60") # sm_60 is Pascal
+    find_package(hipSYCL CONFIG REQUIRED)
+
+    if(WIN32)
+        target_compile_definitions(sycl_test PRIVATE -D_USE_MATH_DEFINES)
+    endif()
 
     add_sycl_to_target(TARGET sycl_test SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
                         ${CMAKE_CURRENT_BINARY_DIR})
